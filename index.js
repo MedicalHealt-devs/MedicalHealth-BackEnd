@@ -2,6 +2,7 @@
 const express = require('express');
 const { dbConnection } = require('./database/config');
 const cors = require('cors');
+const routes = require('./routes')
 require('dotenv').config();
 
 //* Crear el servidor de express 
@@ -20,8 +21,7 @@ app.use( express.static('public') )
 app.use(express.json())
 
 //* Rutas
-const doctorRoutes = require('./routes/doctor');
-app.use('/api/v1/doctor', doctorRoutes)
+app.use('/api/v1/', routes)
 
 // TODO: crud: eventos
 

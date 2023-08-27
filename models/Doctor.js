@@ -21,15 +21,11 @@ const doctorSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ['Dentist', 'General_Doctor', 'Surgeon'],
+    enum: ['Dentist', 'General_Doctor', 'Podiatrist'],
     default: 'doctor',
+    required: true
   },
-  specialty: {
-    type: String,
-  },
-  licenseNumber: {
-    type: String,
-  },
+  biography: String,
   createdAt: {
     type: Date,
     default: Date.now,

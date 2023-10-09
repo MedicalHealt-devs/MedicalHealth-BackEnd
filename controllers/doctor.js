@@ -36,7 +36,8 @@ const register = async (req, res) => {
         });
 
     } catch (error) {
-        res.status(400).send('Error al crear el doctor', error);
+        console.error(error);
+        res.status(400).send('Error al crear el doctor');
     }
 };
 
@@ -74,7 +75,7 @@ const  login = async (req, res) => {
         });
     }
     catch (error) {
-        console.error(error.message);
+        console.error(error);
         res.status(500).send('Error en el servidor');
     }
 };
@@ -89,7 +90,8 @@ const getAllDoctors = async (req, res) => {
         const doctors = await Doctor.find();
         res.status(200).json(doctors)
     } catch (error) {
-        res.status(500).json({message: 'Error al obtener los doctores', error });
+        console.error(error);
+        res.status(500).send('Error al obtener los doctores');
     }
 }
 

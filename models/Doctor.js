@@ -21,7 +21,7 @@ const doctorSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ['Dentist', 'General_Doctor', 'Podiatrist'],
+    enum: ['Dentist', 'General Doctor', 'Podiatrist', 'Veterinary'],
     default: 'doctor',
     required: true
   },

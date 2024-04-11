@@ -1,6 +1,6 @@
 const Doctor = require("../models/Doctor");
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const { generateJWT } = require("../helpers/jwt");
 
 /**
@@ -10,35 +10,35 @@ const { generateJWT } = require("../helpers/jwt");
  * @returns {Promise<*>}
  */
 const register = async (req, res) => {
-    const { fname, lname, email, password, role, biography } = req.body;
-    try {
+  const { fname, lname, email, password, role, biography } = req.body;
+  try {
+    let doctor = await Doctor.findOne({ email });
 
-        let doctor = await Doctor.findOne({ email });
-
-        if(doctor){
-            return res.status(400).json({
-                ok: false,
-                msg: 'A doctor is already exist'
-            });
-        }
-
-        doctor = new Doctor({ fname, lname, email, password, role, biography });
-
-        const salt = await bcrypt.genSalt(10);
-        doctor.password = await bcrypt.hash(password, salt);
-
-        await doctor.save();
-
-        res.status(201).json({
-            ok: true,
-            msg: 'Doctor created successfully',
-            doctor
-        });
-
-    } catch (error) {
-        console.error(error);
-        res.status(400).send('Error al crear el doctor');
+    if (doctor) {
+      return res.status(400).json({
+        ok: false,
+        msg: "Ya existe un doctor asociado con este correo. Intenta con un correo diferente.",
+      });
     }
+
+    doctor = new Doctor({ fname, lname, email, password, role, biography });
+
+    const salt = await bcrypt.genSalt(10);
+    doctor.password = await bcrypt.hash(password, salt);
+
+    await doctor.save();
+
+    const token = await generateJWT(doctor.id, doctor.email);
+
+    res.status(201).json({
+      ok: true,
+      msg: "Doctor created successfully",
+      token,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).send("Error al crear el doctor");
+  }
 };
 
 /**
@@ -47,37 +47,36 @@ const register = async (req, res) => {
  * @param {*} res - Response
  * @returns {JSON} - Doctor logged successfully
  */
-const  login = async (req, res) => {
-    const { email, password } = req.body;
-    try {
-        let doctor = await Doctor.findOne({ email });
-        if (!doctor) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'Doctor not found'
-            });
-        }
-        const validPassword = await bcrypt.compare(password, doctor.password);
-        if (!validPassword) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'Incorrect password'
-            });
-        }
-
-        const token = await generateJWT(doctor.id, doctor.fname);
-
-        res.status(200).json({
-            ok: true,
-            msg: 'Doctor logged successfully',
-            doctor,
-            token
-        });
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    let doctor = await Doctor.findOne({ email });
+    if (!doctor) {
+      return res.status(400).json({
+        ok: false,
+        msg: "Doctor not found",
+      });
     }
-    catch (error) {
-        console.error(error);
-        res.status(500).send('Error en el servidor');
+    const validPassword = await bcrypt.compare(password, doctor.password);
+    if (!validPassword) {
+      return res.status(400).json({
+        ok: false,
+        msg: "Incorrect password",
+      });
     }
+
+    const token = await generateJWT(doctor.id, doctor.fname);
+
+    res.status(200).json({
+      ok: true,
+      msg: "Doctor logged successfully",
+      doctor,
+      token,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error en el servidor");
+  }
 };
 /**
  * Obtain all doctors saved
@@ -86,17 +85,17 @@ const  login = async (req, res) => {
  * @returns {Promise<void>}
  */
 const getAllDoctors = async (req, res) => {
-    try {
-        const doctors = await Doctor.find();
-        res.status(200).json(doctors)
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error al obtener los doctores');
-    }
-}
+  try {
+    const doctors = await Doctor.find();
+    res.status(200).json(doctors);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener los doctores");
+  }
+};
 
 module.exports = {
-    register,
-    login,
-    getAllDoctors
-}
+  register,
+  login,
+  getAllDoctors,
+};

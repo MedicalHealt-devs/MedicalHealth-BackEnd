@@ -5,11 +5,12 @@ const renewToken = async (req, res) => {
     const { id, name } = req;
 
     const token = await generateJWT(id, name);
+    console.log(id);
 
     res.status(200).json({
       ok: true,
       msg: "Token refreshed successfully",
-      token,
+      token
     });
   } catch (e) {
     console.error(e);

@@ -28,7 +28,14 @@ const register = async (req, res) => {
 
     await doctor.save();
 
-    const token = await generateJWT(doctor.id, doctor.email);
+    const token = await generateJWT(
+      doctor.id,
+      doctor.fname,
+      doctor.lname,
+      doctor.email,
+      doctor.role,
+      doctor.biography
+    );
 
     res.status(201).json({
       ok: true,
@@ -65,12 +72,26 @@ const login = async (req, res) => {
       });
     }
 
-    const token = await generateJWT(doctor.id, doctor.fname);
+    const token = await generateJWT(
+      doctor.id,
+      doctor.fname,
+      doctor.lname,
+      doctor.email,
+      doctor.role,
+      doctor.biography
+    );
 
     res.status(200).json({
       ok: true,
       msg: "Doctor logged successfully",
-      doctor,
+      doctor: {
+        id: doctor.id,
+        fname: doctor.fname,
+        lname: doctor.lname,
+        email: doctor.email,
+        role: doctor.role,
+        biography: doctor.biography,
+      },
       token,
     });
   } catch (error) {

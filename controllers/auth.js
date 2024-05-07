@@ -2,15 +2,13 @@ const { generateJWT } = require("../helpers/jwt");
 
 const renewToken = async (req, res) => {
   try {
-    const { id, name } = req;
-
-    const token = await generateJWT(id, name);
-    console.log(id);
+    const { uid, fname, lname, email, role, biography } = req;
+    const newToken = await generateJWT(uid, fname, lname, email, role, biography);
 
     res.status(200).json({
       ok: true,
       msg: "Token refreshed successfully",
-      token
+      newToken,
     });
   } catch (e) {
     console.error(e);

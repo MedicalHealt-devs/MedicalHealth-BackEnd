@@ -25,6 +25,10 @@ const doctorSchema = new Schema({
     default: 'doctor',
     required: true
   },
+  rememberMe: {
+    type: Boolean,
+    default: false,
+  },
   biography: String,
   createdAt: {
     type: Date,

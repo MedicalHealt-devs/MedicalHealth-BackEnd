@@ -10,7 +10,8 @@ const { generateJWT } = require("../helpers/jwt");
  * @returns {Promise<*>}
  */
 const register = async (req, res) => {
-  const { fname, lname, email, password, role, biography } = req.body;
+  const { fname, lname, email, password, role, biography, rememberMe } =
+    req.body;
   try {
     let doctor = await Doctor.findOne({ email });
 
@@ -21,7 +22,15 @@ const register = async (req, res) => {
       });
     }
 
-    doctor = new Doctor({ fname, lname, email, password, role, biography });
+    doctor = new Doctor({
+      fname,
+      lname,
+      email,
+      password,
+      role,
+      biography,
+      rememberMe,
+    });
 
     const salt = await bcrypt.genSalt(10);
     doctor.password = await bcrypt.hash(password, salt);
@@ -34,7 +43,8 @@ const register = async (req, res) => {
       doctor.lname,
       doctor.email,
       doctor.role,
-      doctor.biography
+      doctor.biography,
+      doctor.rememberMe
     );
 
     res.status(201).json({
@@ -55,7 +65,7 @@ const register = async (req, res) => {
  * @returns {JSON} - Doctor logged successfully
  */
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, rememberMe } = req.body;
   try {
     let doctor = await Doctor.findOne({ email });
     if (!doctor) {
@@ -70,6 +80,11 @@ const login = async (req, res) => {
         ok: false,
         msg: "Incorrect password",
       });
+    }
+
+    if (rememberMe) {
+      doctor.rememberMe = rememberMe;
+      await doctor.save();
     }
 
     const token = await generateJWT(

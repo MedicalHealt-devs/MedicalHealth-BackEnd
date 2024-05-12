@@ -14,6 +14,7 @@ This project is a backend service built with Node.js v18 that provides a REST AP
 ## Features
 
 - Doctors can register in the system ✅
+- Autentication by JWT ✅
 
 ## Installation
 

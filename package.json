@@ -1,6 +1,6 @@
 {
   "name": "medicalhealth-backend",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A Node.js application to manage and store patients' clinical histories.",
   "main": "index.js",
   "scripts": {
